@@ -1,0 +1,16 @@
+# Ignore source files (only build directory is needed)
+src/
+node_modules/
+.git/
+.github/
+*.md
+deploy.sh
+ecosystem.config.js
+ec2-setup.sh
+DEPLOYMENT.md
+tsconfig.json
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
