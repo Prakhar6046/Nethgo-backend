@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && node scripts/copy-assets.js",
+    "build": "npx tsc && node scripts/copy-assets.js",
     "postbuild": "node scripts/copy-assets.js",
     "start": "  npx tsc && nodemon node build/index.js",
     "start:prod": "node build/index.js",
