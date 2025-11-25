@@ -1,0 +1,3 @@
+# This file ensures the public directory exists for Vercel
+# Vercel requires a public directory even for serverless-only projects
+
