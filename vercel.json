@@ -16,11 +16,6 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "build/index.js": {
-      "includeFiles": "build/**"
-    }
   }
 }
 
