@@ -1,0 +1,52 @@
+{
+  "name": "track-hire-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && node scripts/copy-assets.js",
+    "postbuild": "node scripts/copy-assets.js",
+    "start": "  npx tsc && nodemon node build/index.js",
+    "start:prod": "node build/index.js",
+    "dev": "npx tsc && nodemon node build/index.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ncc-backend",
+    "pm2:restart": "pm2 restart ncc-backend",
+    "pm2:logs": "pm2 logs ncc-backend",
+    "pm2:status": "pm2 status"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.0.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/nodemailer": "^6.4.16",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/express": "^4.17.21",
+    "@types/passport": "^1.0.17",
+    "@types/passport-jwt": "^4.0.1",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^13.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.7.3",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.16",
+    "npm": "^10.8.2",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "stripe": "^17.3.1",
+    "translate": "^3.0.1"
+  }
+}
