@@ -76,20 +76,13 @@ cron.schedule("0 0 * * 0", () => {
 //setup the Port
 //All Rout use
 app.use(route);
-const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+const PORT: number = 5000;
 // Schedule the task to run daily at midnight
 
-// For Vercel, export the app as a serverless function
-// For local development, start the server
-if (!process.env.VERCEL) {
-  // Bind to 0.0.0.0 to accept connections from all network interfaces (needed for mobile apps)
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log("server has started on port");
-    console.log("http://localhost:" + PORT);
-    console.log("Server is accessible from network interfaces");
-    console.log("For Android emulator, use: http://10.0.2.2:" + PORT);
-  });
-}
-
-// Export for Vercel serverless function (CommonJS export for @vercel/node)
-export = app;
+// Bind to 0.0.0.0 to accept connections from all network interfaces (needed for mobile apps)
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("server has started on port");
+  console.log("http://localhost:" + PORT);
+  console.log("Server is accessible from network interfaces");
+  console.log("For Android emulator, use: http://10.0.2.2:" + PORT);
+});

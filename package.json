@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "start": "  npx tsc && nodemon node build/index.js",
     "start:prod": "node build/index.js",
     "dev": "npx tsc && nodemon node build/index.js",
-    "vercel-build": "npm run build",
     "pm2:start": "pm2 start ecosystem.config.js",
     "pm2:stop": "pm2 stop ncc-backend",
     "pm2:restart": "pm2 restart ncc-backend",
@@ -24,7 +23,8 @@
     "@types/node": "^22.0.0",
     "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.16",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "@types/crypto-js": "^4.2.2",
@@ -46,7 +46,6 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "stripe": "^17.3.1",
-    "translate": "^3.0.1",
-    "typescript": "^5.5.4"
+    "translate": "^3.0.1"
   }
 }
