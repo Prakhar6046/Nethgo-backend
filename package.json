@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && npm run postbuild",
+    "build": "npx tsc && npm run postbuild",
     "postbuild": "mkdir -p build/utils && cp src/utils/serviceAccountKey.json build/utils/ || echo 'serviceAccountKey.json not found, skipping...' && node scripts/fix-vercel-export.js",
     "start": "  npx tsc && nodemon node build/index.js",
     "start:prod": "node build/index.js",
