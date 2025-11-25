@@ -77,9 +77,6 @@ cron.schedule("0 0 * * 0", () => {
 //All Rout use
 app.use(route);
 
-// Export the app for Vercel serverless functions
-export default app;
-
 // Use PORT from environment variable (Vercel provides this) or default to 5000 for local development
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
@@ -93,3 +90,6 @@ if (!process.env.VERCEL) {
     console.log("For Android emulator, use: http://10.0.2.2:" + PORT);
   });
 }
+
+// Export the app for Vercel serverless functions
+export default app;
