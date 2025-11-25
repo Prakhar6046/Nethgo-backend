@@ -1,13 +1,13 @@
 // Vercel serverless function entry point
-// This imports the Express app from api/app.js (created during build)
+// This imports the Express app from api/build/index.js
+// The entire build directory is copied to api/build during build process
 
-// Use a try-catch to handle the require gracefully
 let app;
 
 try {
-  // Try to require app.js from the same directory
-  // This file is created by scripts/copy-assets.js during build
-  const appModule = require('./app.js');
+  // Require from api/build/index.js
+  // The entire build directory structure is copied here, so all relative imports work
+  const appModule = require('./build/index.js');
   
   // Handle both ES6 default export and CommonJS export
   app = appModule.default || appModule;
@@ -16,7 +16,7 @@ try {
     throw new Error(`Express app not found in module. Available keys: ${Object.keys(appModule).join(', ')}`);
   }
   
-  console.log('✓ Express app loaded successfully from api/app.js');
+  console.log('✓ Express app loaded successfully from api/build/index.js');
 } catch (error) {
   console.error('✗ ERROR loading Express app:', error.message);
   console.error('Error code:', error.code);
@@ -24,8 +24,8 @@ try {
   console.error('process.cwd():', process.cwd());
   
   if (error.code === 'MODULE_NOT_FOUND') {
-    console.error('The api/app.js file was not found. Make sure the build process completed successfully.');
-    console.error('Expected location:', require('path').join(__dirname, 'app.js'));
+    console.error('The api/build/index.js file was not found. Make sure the build process completed successfully.');
+    console.error('Expected location:', require('path').join(__dirname, 'build', 'index.js'));
   }
   
   // Return an error handler

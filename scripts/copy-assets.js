@@ -1,6 +1,26 @@
 const fs = require('fs');
 const path = require('path');
 
+// Function to copy directory recursively
+function copyDir(src, dest) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+  
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    
+    if (entry.isDirectory()) {
+      copyDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
 // Create build/utils directory if it doesn't exist
 const buildUtilsDir = path.join(__dirname, '..', 'build', 'utils');
 if (!fs.existsSync(buildUtilsDir)) {
@@ -19,7 +39,9 @@ if (fs.existsSync(sourceFile)) {
 }
 
 // Verify build/index.js exists (main entry point)
-const buildIndexFile = path.join(__dirname, '..', 'build', 'index.js');
+const buildDir = path.join(__dirname, '..', 'build');
+const buildIndexFile = path.join(buildDir, 'index.js');
+
 if (!fs.existsSync(buildIndexFile)) {
   console.error('✗ ERROR: build/index.js not found! TypeScript compilation may have failed.');
   process.exit(1);
@@ -34,39 +56,29 @@ if (!fs.existsSync(apiDir)) {
   console.log('✓ Created api directory');
 }
 
-// Copy build/index.js to api/app.js for easier access in Vercel
-// This ensures the serverless function can find the built app in the same directory
-const apiAppFile = path.join(apiDir, 'app.js');
-
-// Read the built file content
-let buildContent;
+// Copy the ENTIRE build directory to api/build
+// This ensures all relative imports (like ./Routes/routes) work correctly
+const apiBuildDir = path.join(apiDir, 'build');
 try {
-  buildContent = fs.readFileSync(buildIndexFile, 'utf8');
-  console.log(`✓ Read build/index.js (${buildContent.length} characters)`);
-} catch (err) {
-  console.error('✗ ERROR: Could not read build/index.js:', err.message);
-  process.exit(1);
-}
-
-// Write to api/app.js
-try {
-  fs.writeFileSync(apiAppFile, buildContent, 'utf8');
-  console.log('✓ Copied build/index.js to api/app.js for Vercel');
+  // Remove existing api/build if it exists
+  if (fs.existsSync(apiBuildDir)) {
+    fs.rmSync(apiBuildDir, { recursive: true, force: true });
+  }
   
-  // Verify the copy was successful
-  if (fs.existsSync(apiAppFile)) {
-    const stats = fs.statSync(apiAppFile);
-    const verifyContent = fs.readFileSync(apiAppFile, 'utf8');
-    if (verifyContent === buildContent) {
-      console.log(`✓ Verified api/app.js exists and matches source (${stats.size} bytes)`);
-    } else {
-      throw new Error('Copy verification failed - content mismatch');
-    }
+  // Copy entire build directory
+  copyDir(buildDir, apiBuildDir);
+  console.log('✓ Copied entire build directory to api/build/');
+  
+  // Verify the copy
+  const apiBuildIndex = path.join(apiBuildDir, 'index.js');
+  if (fs.existsSync(apiBuildIndex)) {
+    const stats = fs.statSync(apiBuildIndex);
+    console.log(`✓ Verified api/build/index.js exists (${stats.size} bytes)`);
   } else {
-    throw new Error('Copy verification failed - file does not exist after write');
+    throw new Error('Copy verification failed - api/build/index.js does not exist');
   }
 } catch (err) {
-  console.error('✗ ERROR: Could not write to api/app.js:', err.message);
+  console.error('✗ ERROR: Could not copy build directory to api/build:', err.message);
   console.error('This will cause the Vercel deployment to fail!');
   process.exit(1);
 }
