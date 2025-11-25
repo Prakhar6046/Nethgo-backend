@@ -37,19 +37,36 @@ if (!fs.existsSync(apiDir)) {
 // Copy build/index.js to api/app.js for easier access in Vercel
 // This ensures the serverless function can find the built app in the same directory
 const apiAppFile = path.join(apiDir, 'app.js');
+
+// Read the built file content
+let buildContent;
 try {
-  fs.copyFileSync(buildIndexFile, apiAppFile);
+  buildContent = fs.readFileSync(buildIndexFile, 'utf8');
+  console.log(`✓ Read build/index.js (${buildContent.length} characters)`);
+} catch (err) {
+  console.error('✗ ERROR: Could not read build/index.js:', err.message);
+  process.exit(1);
+}
+
+// Write to api/app.js
+try {
+  fs.writeFileSync(apiAppFile, buildContent, 'utf8');
   console.log('✓ Copied build/index.js to api/app.js for Vercel');
   
   // Verify the copy was successful
   if (fs.existsSync(apiAppFile)) {
     const stats = fs.statSync(apiAppFile);
-    console.log(`✓ Verified api/app.js exists (${stats.size} bytes)`);
+    const verifyContent = fs.readFileSync(apiAppFile, 'utf8');
+    if (verifyContent === buildContent) {
+      console.log(`✓ Verified api/app.js exists and matches source (${stats.size} bytes)`);
+    } else {
+      throw new Error('Copy verification failed - content mismatch');
+    }
   } else {
-    throw new Error('Copy verification failed - file does not exist after copy');
+    throw new Error('Copy verification failed - file does not exist after write');
   }
 } catch (err) {
-  console.error('✗ ERROR: Could not copy to api/app.js:', err.message);
+  console.error('✗ ERROR: Could not write to api/app.js:', err.message);
   console.error('This will cause the Vercel deployment to fail!');
   process.exit(1);
 }

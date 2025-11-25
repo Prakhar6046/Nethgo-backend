@@ -1,70 +1,43 @@
 // Vercel serverless function entry point
-// This imports the Express app from the build folder
-const path = require('path');
-const fs = require('fs');
+// This imports the Express app from api/app.js (created during build)
 
+// Use a try-catch to handle the require gracefully
 let app;
 
 try {
-  // Try multiple paths in order of preference
-  const possiblePaths = [
-    path.join(__dirname, 'app.js'),                    // Copied to api/app.js during build
-    path.join(__dirname, '..', 'build', 'index.js'),  // Standard build location
-    path.join(process.cwd(), 'build', 'index.js')     // Absolute from project root
-  ];
+  // Try to require app.js from the same directory
+  // This file is created by scripts/copy-assets.js during build
+  const appModule = require('./app.js');
   
-  let appModule = null;
-  let usedPath = null;
-  let lastError = null;
-  
-  for (const buildPath of possiblePaths) {
-    try {
-      const resolvedPath = path.resolve(buildPath);
-      if (fs.existsSync(resolvedPath)) {
-        appModule = require(resolvedPath);
-        usedPath = resolvedPath;
-        console.log(`✓ Successfully loaded app from: ${usedPath}`);
-        break;
-      }
-    } catch (err) {
-      lastError = err;
-      continue;
-    }
-  }
-  
-  if (!appModule) {
-    throw new Error(
-      `Could not find Express app. Tried: ${possiblePaths.join(', ')}. ` +
-      `Last error: ${lastError ? lastError.message : 'File not found'}`
-    );
-  }
-  
-  // Handle ES6 default export (compiled to .default) or direct CommonJS export
+  // Handle both ES6 default export and CommonJS export
   app = appModule.default || appModule;
   
   if (!app) {
-    console.error('Available module keys:', Object.keys(appModule));
-    throw new Error('Express app not found. Check exports. Module keys: ' + Object.keys(appModule).join(', '));
+    throw new Error(`Express app not found in module. Available keys: ${Object.keys(appModule).join(', ')}`);
   }
   
-  console.log('✓ Express app loaded successfully');
+  console.log('✓ Express app loaded successfully from api/app.js');
 } catch (error) {
-  console.error('✗ Error loading Express app:', error.message);
+  console.error('✗ ERROR loading Express app:', error.message);
   console.error('Error code:', error.code);
-  if (error.stack) {
-    console.error('Stack:', error.stack);
+  console.error('__dirname:', __dirname);
+  console.error('process.cwd():', process.cwd());
+  
+  if (error.code === 'MODULE_NOT_FOUND') {
+    console.error('The api/app.js file was not found. Make sure the build process completed successfully.');
+    console.error('Expected location:', require('path').join(__dirname, 'app.js'));
   }
   
-  // Return a simple error handler
+  // Return an error handler
   app = (req, res) => {
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Server initialization failed',
-      message: error.message
+      message: `Could not load Express app: ${error.message}`,
+      code: error.code
     });
   };
 }
 
-// Export as a serverless function handler
-// Vercel expects the Express app directly, not wrapped in a function
+// Export the Express app directly for Vercel
 module.exports = app;
 
