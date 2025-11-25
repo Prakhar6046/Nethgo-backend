@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "installCommand": "npm ci",
-  "framework": null,
+  "builds": [
+    {
+      "src": "build/index.js",
+      "use": "@vercel/node"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/index.js"
+      "dest": "build/index.js"
     }
   ]
 }
