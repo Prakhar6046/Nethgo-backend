@@ -24,7 +24,8 @@ const corsOptions = {
         "https://ncc-backend-testing-d2j6.vercel.app",
         "http://localhost:5174",
         "https://ncc-sobm.vercel.app",
-        "https://web.nethgo.com"
+        "https://web.nethgo.com",
+        "https://nethgo-backend.vercel.app"
       ]
     : true, // Allow all origins in development (for mobile apps)
   methods: "GET,POST,PUT,DELETE",
@@ -76,13 +77,20 @@ cron.schedule("0 0 * * 0", () => {
 //setup the Port
 //All Rout use
 app.use(route);
-const PORT: number = 5000;
-// Schedule the task to run daily at midnight
 
-// Bind to 0.0.0.0 to accept connections from all network interfaces (needed for mobile apps)
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("server has started on port");
-  console.log("http://localhost:" + PORT);
-  console.log("Server is accessible from network interfaces");
-  console.log("For Android emulator, use: http://10.0.2.2:" + PORT);
-});
+// Export the app for Vercel serverless functions
+export default app;
+
+// Only start listening if not on Vercel (for local development)
+if (!process.env.VERCEL) {
+  const PORT: number = 5000;
+  // Schedule the task to run daily at midnight
+
+  // Bind to 0.0.0.0 to accept connections from all network interfaces (needed for mobile apps)
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log("server has started on port");
+    console.log("http://localhost:" + PORT);
+    console.log("Server is accessible from network interfaces");
+    console.log("For Android emulator, use: http://10.0.2.2:" + PORT);
+  });
+}
