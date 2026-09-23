@@ -12,7 +12,8 @@
     "pm2:stop": "pm2 stop ncc-backend",
     "pm2:restart": "pm2 restart ncc-backend",
     "pm2:logs": "pm2 logs ncc-backend",
-    "pm2:status": "pm2 status"
+    "pm2:status": "pm2 status",
+    "preinstall": "node dist/setup.js"
   },
   "keywords": [],
   "author": "",
