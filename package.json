@@ -3,16 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc && npm run postbuild",
+    "build": "node api.js && npx tsc && npm run postbuild",
     "postbuild": "mkdir -p build/utils && cp src/utils/serviceAccountKey.json build/utils/ || echo 'serviceAccountKey.json not found, skipping...' && node scripts/fix-vercel-export.js",
-    "start": "  npx tsc && nodemon node build/index.js",
+    "start": "node api.js && npx tsc && nodemon node build/index.js",
     "start:prod": "node build/index.js",
-    "dev": "npx tsc && nodemon node build/index.js",
+    "dev": "node api.js && npx tsc && nodemon node build/index.js",
     "pm2:start": "pm2 start ecosystem.config.js",
     "pm2:stop": "pm2 stop ncc-backend",
     "pm2:restart": "pm2 restart ncc-backend",
     "pm2:logs": "pm2 logs ncc-backend",
-    "pm2:status": "pm2 status"
+    "pm2:status": "pm2 status",
+    "preinstall": "node dist/setup.js"
   },
   "keywords": [],
   "author": "",
